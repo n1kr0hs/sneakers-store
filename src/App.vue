@@ -1,11 +1,23 @@
-<script setup></script>
+<!--SFC - Single File Component - в одном файле логика, верстка, стилизация-->
+<script setup>
+import { ref } from "vue";
+import { CardList, Drawer, TheHeader } from "./components";
+
+const isDrawerOpen = ref(true);
+
+function handleDrawerClose() {
+  console.log("Событие close из Drawer дошло до родителя");
+  isDrawerOpen.value = false;
+}
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <Drawer v-if="isDrawerOpen" @close="handleDrawerClose" />
+  <div class="w-4/5 m-auto bg-white rounded-xl shadow-xl mt-10">
+    <TheHeader />
+    <div class="p-10">
+      <h2 class="text-3xl font-bold mb-8">Все кроссовки</h2>
+      <CardList />
+    </div>
+  </div>
 </template>
-
-<style scoped></style>
