@@ -1,13 +1,19 @@
 <script setup>
 import CardListItem from "./CardListItem.vue";
+
+const props = defineProps({
+  items: Array,
+});
 </script>
 
 <template>
   <div class="grid grid-cols-4 gap-5">
     <CardListItem
-      img-url="/sneakers/sneakers-1.jpg"
-      title="Puma"
-      :price="5000"
+      v-for="item in items"
+      :key="item.id"
+      :title="item.title"
+      :imgUrl="item.imageUrl"
+      :price="item.price"
     />
   </div>
 </template>

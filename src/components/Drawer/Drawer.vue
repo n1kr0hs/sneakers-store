@@ -4,7 +4,6 @@ import DrawerHeader from "./DrawerHeader.vue";
 const emit = defineEmits(["close"]);
 
 function handleClose() {
-  console.log("Клик на SVG в DrawerHeader");
   emit("close");
 }
 </script>
