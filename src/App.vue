@@ -50,7 +50,6 @@ const createOrder = async () => {
   try {
     const { data } = await axios.post(`${API_BASE}/orders`, {
       items: cartItems.value,
-      totalPrice: totalPrice.value,
     });
     cartItems.value = [];
     items.value = items.value.map((item) => ({ ...item, isAdded: false }));
