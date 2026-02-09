@@ -9,7 +9,7 @@ const emit = defineEmits(["remove"]);
   <div class="flex items-center border border-slate-100 p-4 rounded-xl gap-4">
     <img
       class="w-16 h-16 object-cover rounded-lg"
-      :src="item.imageUrl || '/sneakers/sneakers-1.jpg'"
+      :src="item.imageUrl"
       :alt="item.title"
     />
 

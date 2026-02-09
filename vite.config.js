@@ -8,13 +8,15 @@ import vueDevTools from "vite-plugin-vue-devtools";
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const base = mode === "production" ? "/vue-project/" : "/";
+
   return {
     plugins: [vue(), vueDevTools(), tailwindcss()],
     base,
     resolve: {
-      alias: {
-        "@": fileURLToPath(new URL("./src", import.meta.url)),
-      },
+      alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
+    },
+    build: {
+      outDir: "docs",
     },
   };
 });

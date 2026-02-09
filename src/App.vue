@@ -55,6 +55,7 @@ const createOrder = async () => {
     cartItems.value = [];
     items.value = items.value.map((item) => ({ ...item, isAdded: false }));
     closeDrawer();
+
     return data;
   } catch (err) {
     console.error("Ошибка оформления заказа:", err);
