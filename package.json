@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "homepage": "https://n1kr0hs.github.io/vue-project",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
