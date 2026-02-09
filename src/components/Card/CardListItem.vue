@@ -1,13 +1,13 @@
 <script setup>
-const props = defineProps({
+defineProps({
   id: Number,
-  imgUrl: String,
+  imageUrl: String,
   title: String,
   price: Number,
   isFavorite: Boolean,
   isAdded: Boolean,
-  onClickFavorite: Function,
-  onClickAdd: Function,
+  onClickFavorite: { type: Function, default: null },
+  onClickAdd: { type: Function, default: null },
 });
 </script>
 
@@ -17,11 +17,11 @@ const props = defineProps({
   >
     <img
       :src="!isFavorite ? '/like-1.svg' : '/like-2.svg'"
-      @click="onClickFavorite"
-      alt="Like On"
+      @click.stop="onClickFavorite?.()"
+      alt="Like"
       class="absolute top-8 left-8"
     />
-    <img :src="imgUrl" alt="Sneaker" />
+    <img :src="imageUrl" alt="Sneaker" />
     <p class="mt-2">{{ title }}</p>
 
     <div class="flex justify-between mt-5">
@@ -32,8 +32,8 @@ const props = defineProps({
 
       <img
         :src="!isAdded ? '/plus.svg' : '/checked.svg'"
-        @click="onClickAdd"
-        alt="Plus"
+        @click.stop="onClickAdd?.()"
+        alt="Добавить в корзину"
       />
     </div>
   </div>

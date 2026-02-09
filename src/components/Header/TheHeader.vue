@@ -1,3 +1,10 @@
+<script setup>
+defineProps({
+  cartTotal: { type: Number, default: 0 },
+});
+const emit = defineEmits(["open-cart"]);
+</script>
+
 <template>
   <header class="flex justify-between border-b border-slate-300 px-10 py-8">
     <div class="flex items-center gap-4">
@@ -11,9 +18,10 @@
     <ul class="flex items-center gap-10">
       <li
         class="flex items-center cursor-pointer gap-3 text-slate-500 hover:text-black"
+        @click="emit('open-cart')"
       >
         <img src="/cart.svg" alt="Cart" />
-        <p class="font-bold">1205 руб.</p>
+        <p class="font-bold">{{ cartTotal }} руб.</p>
       </li>
 
       <li

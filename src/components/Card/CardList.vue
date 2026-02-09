@@ -1,11 +1,10 @@
 <script setup>
 import CardListItem from "./CardListItem.vue";
 
-const props = defineProps({
+defineProps({
   items: Array,
 });
-
-const emit = defineEmits(["addToFavorite"]);
+const emit = defineEmits(["addToFavorite", "addToCart"]);
 </script>
 
 <template>
@@ -15,10 +14,12 @@ const emit = defineEmits(["addToFavorite"]);
       :key="item.id"
       :id="item.id"
       :title="item.title"
-      :imgUrl="item.imageUrl"
+      :image-url="item.imageUrl"
       :price="item.price"
-      :onClickFavorite="() => emit('addToFavorite', item)"
-      :isFavorite="item.isFavorite"
+      :is-favorite="item.isFavorite"
+      :is-added="item.isAdded"
+      :on-click-favorite="() => emit('addToFavorite', item)"
+      :on-click-add="() => emit('addToCart', item)"
     />
   </div>
 </template>

@@ -1,16 +1,28 @@
+<script setup>
+defineProps({
+  item: { type: Object, required: true },
+});
+const emit = defineEmits(["remove"]);
+</script>
+
 <template>
   <div class="flex items-center border border-slate-100 p-4 rounded-xl gap-4">
-    <img class="w-16 h-16" src="/sneakers/sneakers-1.jpg" alt="Sneaker" />
+    <img
+      class="w-16 h-16 object-cover rounded-lg"
+      :src="item.imageUrl || '/sneakers/sneakers-1.jpg'"
+      :alt="item.title"
+    />
 
-    <div class="flex flex-col">
-      <p>Кроссовки Nike Air Max 270</p>
+    <div class="flex flex-col flex-1 min-w-0">
+      <p class="font-medium truncate">{{ item.title }}</p>
 
-      <div class="flex justify-between mt-2">
-        <p class="font-bold">12900р</p>
+      <div class="flex justify-between items-center mt-2">
+        <p class="font-bold">{{ item.price }} руб.</p>
         <img
-          class="opacity-40 hover:opacity-100 cursor-pointer transition"
+          class="opacity-40 hover:opacity-100 cursor-pointer transition w-5 h-5"
           src="/close.svg"
-          alt="Close"
+          alt="Удалить"
+          @click="emit('remove')"
         />
       </div>
     </div>
