@@ -1,10 +1,11 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import CartList from "../Cart/CartList.vue";
 import DrawerHeader from "./DrawerHeader.vue";
 
 const props = defineProps({
   cartItems: { type: Array, default: () => [] },
+  onCreateOrder: { type: Function, default: null },
 });
 const emit = defineEmits(["close", "removeFromCart"]);
 
@@ -13,8 +14,20 @@ const cartTotal = computed(() =>
 );
 const tax = computed(() => Math.round(cartTotal.value * 0.05));
 
+const isLoading = ref(false);
+
 function handleClose() {
   emit("close");
+}
+
+async function handleCreateOrder() {
+  if (!props.cartItems.length || !props.onCreateOrder) return;
+  isLoading.value = true;
+  try {
+    await props.onCreateOrder();
+  } finally {
+    isLoading.value = false;
+  }
 }
 </script>
 
@@ -41,10 +54,11 @@ function handleClose() {
       </div>
 
       <button
-        :disabled="!cartItems.length"
+        :disabled="!cartItems.length || isLoading"
         class="mt-4 bg-lime-500 w-full rounded-xl py-3 text-white cursor-pointer hover:bg-lime-600 active:bg-lime-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition"
+        @click="handleCreateOrder"
       >
-        Оформить заказ
+        {{ isLoading ? "Оформление..." : "Оформить заказ" }}
       </button>
     </div>
   </div>

@@ -46,6 +46,21 @@ const fetchFavorites = async () => {
   }
 };
 
+const createOrder = async () => {
+  try {
+    const { data } = await axios.post(`${API_BASE}/orders`, {
+      items: cartItems.value,
+      totalPrice: totalPrice.value,
+    });
+    cartItems.value = [];
+    items.value = items.value.map((item) => ({ ...item, isAdded: false }));
+    closeDrawer();
+    return data;
+  } catch (err) {
+    console.error("Ошибка оформления заказа:", err);
+  }
+};
+
 const addToCart = (item) => {
   const existing = cartItems.value.find((i) => i.id === item.id);
   if (existing) {
@@ -116,6 +131,7 @@ watch(
     v-if="isDrawerOpen"
     :cart-items="cartItems"
     @close="closeDrawer"
+    :on-create-order="createOrder"
     @remove-from-cart="addToCart"
   />
   <div class="w-4/5 m-auto bg-white rounded-xl shadow-xl mt-10">
