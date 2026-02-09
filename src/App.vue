@@ -1,11 +1,12 @@
 <!--SFC - Single File Component - в одном файле логика, верстка, стилизация-->
 <script setup>
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, provide, reactive, ref, watch } from "vue";
 import axios from "axios";
 import { CardList, Drawer, TheHeader } from "./components";
 
-const isDrawerOpen = ref(true);
+const isDrawerOpen = ref(false);
 const items = ref([]); // {value: []}
+
 const filters = reactive({
   sortBy: "title",
   searchQuery: "",
@@ -21,6 +22,53 @@ const onChangeSelect = (event) => {
 
 const onChangeSearchInput = (event) => {
   filters.searchQuery = event.target.value;
+};
+
+const fetchFavorites = async () => {
+  try {
+    const { data: favorites } = await axios.get(
+      "https://14ef51dbd6f2e9ea.mokky.dev/favorites",
+    );
+    items.value = items.value.map((item) => {
+      const favorite = favorites.find(
+        (favorite) => favorite.productId === item.id,
+      );
+
+      if (!favorite) {
+        return item;
+      }
+
+      return { ...item, isFavorite: true, favoriteId: favorite.id };
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const addToFavorite = async (item) => {
+  try {
+    if (!item.isFavorite) {
+      const obj = {
+        productId: item.id,
+      };
+
+      item.isFavorite = true;
+
+      const { data } = await axios.post(
+        "https://14ef51dbd6f2e9ea.mokky.dev/favorites",
+        obj,
+      );
+      item.favoriteId = data.id;
+    } else {
+      item.isFavorite = false;
+      await axios.delete(
+        `https://14ef51dbd6f2e9ea.mokky.dev/favorites/${item.favoriteId}`,
+      );
+      item.favoriteId = null;
+    }
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const fetchItems = async () => {
@@ -39,14 +87,24 @@ const fetchItems = async () => {
         params,
       },
     );
-    items.value = data;
+    items.value = data.map((obj) => ({
+      ...obj,
+      isFavorite: false,
+      favoriteId: null,
+      isAdded: false,
+    }));
   } catch (err) {
     console.log(err);
   }
 };
 
-onMounted(fetchItems);
+onMounted(async () => {
+  await fetchItems();
+  await fetchFavorites();
+});
 watch(filters, fetchItems);
+
+provide("addToFavorite", addToFavorite);
 </script>
 
 <template>
@@ -80,7 +138,7 @@ watch(filters, fetchItems);
           </div>
         </div>
       </div>
-      <CardList :items="items" />
+      <CardList :items="items" @addToFavorite="addToFavorite" />
     </div>
   </div>
 </template>
