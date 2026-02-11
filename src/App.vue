@@ -113,14 +113,31 @@ const fetchItems = async () => {
 };
 
 onMounted(async () => {
+  const localCart = localStorage.getItem("cart");
+  cartItems.value = localCart ? JSON.parse(localCart) : [];
+
   await fetchItems();
   await fetchFavorites();
+
+  items.value = items.value.map((item) => ({
+    ...item,
+    isAdded: cartItems.value.some((cartItem) => cartItem.id === item.id),
+  }));
 });
+
 watch(
   filters,
   async () => {
     await fetchItems();
     await fetchFavorites();
+  },
+  { deep: true },
+);
+
+watch(
+  cartItems,
+  () => {
+    localStorage.setItem("cart", JSON.stringify(cartItems.value));
   },
   { deep: true },
 );
@@ -130,6 +147,7 @@ watch(
   <Drawer
     v-if="isDrawerOpen"
     :cart-items="cartItems"
+    :cart-total="cartTotal"
     @close="closeDrawer"
     :on-create-order="createOrder"
     @remove-from-cart="addToCart"
