@@ -1,6 +1,6 @@
 # Sneakers Store - Магазин кроссовок
 
-## [Deploy](https://n1kr0hs.github.io/vue-project/)
+## [Deploy](https://n1kr0hs.github.io/sneakers-store-vue/)
 
 ### Реализованный функционал
 
@@ -27,6 +27,5 @@
   - Избранное (`/favorites`) — список избранных товаров
 - **Переиспользуемые компоненты** (`Card`, `CartList`, `Drawer`, `InfoBlock`, `TheHeader`), разделенные по ответственности
 - **UI на utility‑классах** (Tailwind‑подобная верстка) с плавными hover‑эффектами на карточках и кнопках
-
 
 #### Stack: Vue 3 Js, Vue Router, TailwindCSS v4, Axios, @formkit/auto-animate
