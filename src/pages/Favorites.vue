@@ -1,33 +1,30 @@
 <script setup>
 import { inject, onMounted, ref, watch } from "vue";
-import axios from "axios";
+import {
+  getFavorites,
+  getItems,
+  removeFavorite,
+} from "@/api/client";
 import { CardList, InfoBlock } from "@/components";
 
-const API_BASE = "https://14ef51dbd6f2e9ea.mokky.dev";
-
 const favoriteItems = ref([]);
-
 const cartContext = inject("cartContext");
 const { cartItems, toggleCartItem } = cartContext ?? {};
 
 const fetchFavorites = async () => {
   try {
-    const [{ data: favorites }, { data: allItems }] = await Promise.all([
-      axios.get(`${API_BASE}/favorites`),
-      axios.get(`${API_BASE}/items`),
+    const [favorites, allItems] = await Promise.all([
+      getFavorites(),
+      getItems(),
     ]);
-
-    const itemMap = new Map(allItems.map((item) => [item.id, item]));
-
+    const itemMap = new Map(allItems.map((i) => [i.id, i]));
     favoriteItems.value = favorites
       .map((fav) => {
         const item = itemMap.get(fav.productId);
         if (!item) return null;
         return {
           ...item,
-          imageUrl: item.imageUrl?.startsWith("/")
-            ? item.imageUrl
-            : `/${item.imageUrl}`,
+          imageUrl: item.imageUrl?.startsWith("/") ? item.imageUrl : `/${item.imageUrl}`,
           isFavorite: true,
           favoriteId: fav.id,
           isAdded: cartItems?.value?.some((c) => c.id === item.id) ?? false,
@@ -39,15 +36,10 @@ const fetchFavorites = async () => {
   }
 };
 
-const addToCart = (item) => {
-  if (cartContext) {
-    toggleCartItem(item);
-  }
-};
-
+const addToCart = (item) => toggleCartItem?.(item);
 const addToFavorite = async (item) => {
   try {
-    await axios.delete(`${API_BASE}/favorites/${item.favoriteId}`);
+    await removeFavorite(item.favoriteId);
     favoriteItems.value = favoriteItems.value.filter((i) => i.id !== item.id);
   } catch (err) {
     console.error("Ошибка удаления из избранного:", err);
@@ -56,24 +48,26 @@ const addToFavorite = async (item) => {
 
 watch(
   () => cartItems?.value ?? [],
-  (value) => {
-    favoriteItems.value = favoriteItems.value.map((item) => ({
-      ...item,
-      isAdded: value.some((c) => c.id === item.id),
+  (val) => {
+    favoriteItems.value = favoriteItems.value.map((i) => ({
+      ...i,
+      isAdded: val.some((c) => c.id === i.id),
     }));
   },
-  { deep: true },
+  { deep: true }
 );
 
 onMounted(fetchFavorites);
 </script>
 
 <template>
-  <div>
-    <h2 class="text-3xl font-bold mb-8">Мои закладки</h2>
+  <div class="space-y-6">
+    <h2 class="text-2xl sm:text-3xl font-bold animate-fade-in">
+      Мои закладки
+    </h2>
     <div
       v-if="!favoriteItems.length"
-      class="flex flex-col items-center justify-center py-20"
+      class="flex flex-col items-center justify-center py-16 sm:py-24"
     >
       <InfoBlock
         title="Закладок пока нет"

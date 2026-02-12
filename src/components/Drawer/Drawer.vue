@@ -35,12 +35,12 @@ const handleCreateOrder = async () => {
 
 <template>
   <div
-    class="fixed inset-0 bg-black/70 z-[100]"
+    class="fixed inset-0 bg-black/70 z-[100] animate-fade-in"
     aria-label="Закрыть корзину"
     @click="handleClose"
   ></div>
   <div
-    class="fixed right-0 top-0 h-full w-96 bg-white z-[101] p-8 overflow-y-auto shadow-2xl"
+    class="fixed right-0 top-0 h-full w-full sm:w-96 max-w-full bg-white z-[101] p-4 sm:p-8 overflow-y-auto shadow-2xl animate-slide-in"
   >
     <DrawerHeader @close="handleClose" />
 
@@ -52,14 +52,14 @@ const handleCreateOrder = async () => {
       />
     </div>
 
-    <div v-else class="flex flex-col h-full">
+    <div v-else class="flex flex-col">
       <CartList
         :items="cartItems"
-        class="flex-1"
+        class="flex-1 pb-2 sm:pb-4"
         @remove="emit('removeFromCart', $event)"
       />
 
-      <div class="flex flex-col gap-4 mt-7">
+      <div class="flex flex-col gap-3 sm:gap-4 mt-4 sm:mt-6 pb-2">
         <div class="flex gap-2">
           <span>Итого:</span>
           <div class="flex-1 border-b border-dashed"></div>
@@ -74,7 +74,7 @@ const handleCreateOrder = async () => {
 
         <button
           :disabled="!cartItems.length || isLoading"
-          class="mt-4 bg-lime-500 w-full rounded-xl py-3 text-white cursor-pointer hover:bg-lime-600 active:bg-lime-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition"
+          class="mt-4 bg-lime-500 w-full rounded-xl py-3 text-white font-medium cursor-pointer hover:bg-lime-600 active:bg-lime-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
           @click="handleCreateOrder"
         >
           {{ isLoading ? "Оформление..." : "Оформить заказ" }}

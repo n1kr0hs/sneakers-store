@@ -6,7 +6,9 @@ const emit = defineEmits(["remove"]);
 </script>
 
 <template>
-  <div class="flex items-center border border-slate-100 p-4 rounded-xl gap-4">
+  <div
+    class="flex items-center border border-slate-100 p-3 sm:p-4 rounded-xl gap-3 sm:gap-4 transition-all hover:border-lime-200"
+  >
     <img
       class="w-16 h-16 object-cover rounded-lg"
       :src="item.imageUrl"

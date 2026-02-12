@@ -1,10 +1,8 @@
 <script setup>
 import { computed, onMounted, provide, ref, watch } from "vue";
-import axios from "axios";
 import { RouterView } from "vue-router";
+import { createOrder as apiCreateOrder } from "@/api/client";
 import { Drawer, TheHeader } from "@/components";
-
-const API_BASE = "https://14ef51dbd6f2e9ea.mokky.dev";
 
 const cartItems = ref([]);
 const isDrawerOpen = ref(false);
@@ -34,15 +32,9 @@ const toggleCartItem = (item) => {
 };
 
 const createOrder = async () => {
-  if (!cartItems.value.length) {
-    return;
-  }
-
+  if (!cartItems.value.length) return;
   try {
-    await axios.post(`${API_BASE}/orders`, {
-      items: cartItems.value,
-    });
-
+    await apiCreateOrder(cartItems.value);
     cartItems.value = [];
     closeDrawer();
   } catch (err) {
@@ -85,10 +77,12 @@ onMounted(() => {
     @close="closeDrawer"
     @remove-from-cart="toggleCartItem"
   />
-  <div class="w-4/5 m-auto bg-white rounded-xl shadow-xl mt-10">
+  <div class="w-full max-w-6xl mx-auto px-3 sm:px-6 mt-4 sm:mt-10">
+  <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
     <TheHeader :cart-total="cartTotal" @open-cart="openDrawer" />
-    <div class="p-10">
-      <RouterView />
+    <div class="p-4 sm:p-6 lg:p-10">
+        <RouterView />
     </div>
   </div>
+</div>
 </template>
