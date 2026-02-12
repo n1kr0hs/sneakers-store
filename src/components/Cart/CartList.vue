@@ -1,19 +1,17 @@
 <script setup>
+import { useCartStore } from "@/stores/cart";
 import CartListItem from "./CartListItem.vue";
 
-defineProps({
-  items: { type: Array, default: () => [] },
-});
-const emit = defineEmits(["remove"]);
+const cartStore = useCartStore();
 </script>
 
 <template>
   <div class="flex flex-col gap-4" v-auto-animate>
     <CartListItem
-      v-for="item in items"
+      v-for="item in cartStore.items"
       :key="item.id"
       :item="item"
-      @remove="emit('remove', item)"
+      @remove="cartStore.toggleCartItem(item)"
     />
   </div>
 </template>

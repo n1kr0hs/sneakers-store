@@ -1,31 +1,33 @@
 <script setup>
-import { inject, onMounted, ref, watch } from "vue";
-import { getFavorites, getItems, removeFavorite } from "@/api/client";
+import { computed, onMounted, ref, watch } from "vue";
+import { getItems } from "@/api/client";
+import { useCartStore } from "@/stores/cart";
+import { useFavoritesStore } from "@/stores/favorites";
 import { CardList, InfoBlock } from "@/components";
 
 const favoriteItems = ref([]);
 const isLoading = ref(true);
-const cartContext = inject("cartContext");
-const { cartItems, toggleCartItem } = cartContext ?? {};
+
+const cartStore = useCartStore();
+const favoritesStore = useFavoritesStore();
 
 const fetchFavorites = async () => {
   try {
     isLoading.value = true;
-    const [favorites, allItems] = await Promise.all([
-      getFavorites(),
-      getItems(),
-    ]);
+    await favoritesStore.fetchFavorites();
+    const allItems = await getItems();
     const itemMap = new Map(allItems.map((i) => [i.id, i]));
-    favoriteItems.value = favorites
-      .map((fav) => {
-        const item = itemMap.get(fav.productId);
+    
+    favoriteItems.value = Array.from(favoritesStore.favoriteIds)
+      .map((productId) => {
+        const item = itemMap.get(productId);
         if (!item) return null;
         return {
           ...item,
           imageUrl: item.imageUrl || "",
           isFavorite: true,
-          favoriteId: fav.id,
-          isAdded: cartItems?.value?.some((c) => c.id === item.id) ?? false,
+          favoriteId: favoritesStore.getFavoriteId(productId),
+          isAdded: cartStore.items.some((c) => c.id === item.id),
         };
       })
       .filter(Boolean);
@@ -36,10 +38,13 @@ const fetchFavorites = async () => {
   }
 };
 
-const addToCart = (item) => toggleCartItem?.(item);
+const addToCart = (item) => {
+  cartStore.toggleCartItem(item);
+};
+
 const addToFavorite = async (item) => {
   try {
-    await removeFavorite(item.favoriteId);
+    await favoritesStore.removeFavorite(item.id);
     favoriteItems.value = favoriteItems.value.filter((i) => i.id !== item.id);
   } catch (err) {
     console.error("Ошибка удаления из избранного:", err);
@@ -47,11 +52,11 @@ const addToFavorite = async (item) => {
 };
 
 watch(
-  () => cartItems?.value ?? [],
-  (val) => {
+  () => cartStore.items,
+  () => {
     favoriteItems.value = favoriteItems.value.map((i) => ({
       ...i,
-      isAdded: val.some((c) => c.id === i.id),
+      isAdded: cartStore.items.some((c) => c.id === i.id),
     }));
   },
   { deep: true },

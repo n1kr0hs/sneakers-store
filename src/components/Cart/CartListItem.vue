@@ -1,15 +1,13 @@
 <script setup>
 import { computed } from "vue";
+import { formatPrice } from "@/utils/formatPrice";
 
 const props = defineProps({
   item: { type: Object, required: true },
 });
 const emit = defineEmits(["remove"]);
 
-const formattedPrice = computed(() => {
-  if (!props.item.price) return "0";
-  return props.item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u200A");
-});
+const formattedPrice = computed(() => formatPrice(props.item.price));
 </script>
 
 <template>

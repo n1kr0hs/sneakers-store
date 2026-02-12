@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue";
+import { formatPrice } from "@/utils/formatPrice";
 
 const props = defineProps({
   id: Number,
@@ -12,10 +13,7 @@ const props = defineProps({
   onClickAdd: { type: Function, default: null },
 });
 
-const formattedPrice = computed(() => {
-  if (!props.price) return "0";
-  return props.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u200A");
-});
+const formattedPrice = computed(() => formatPrice(props.price));
 </script>
 
 <template>

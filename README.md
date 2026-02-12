@@ -32,4 +32,4 @@
   - После оформления заказа показывается инфо‑блок с номером заказа (`Заказ оформлен! Ваш заказ #id скоро будет передан курьерской доставке`)
   - После закрытия и повторного открытия корзины показывается обычное состояние (пустая корзина / список товаров)
 
-#### Stack: Vue 3 Js, Vue Router, TailwindCSS v4, Axios, @formkit/auto-animate
+#### Stack: Vue 3 Js, Vue Router, Pinia, TailwindCSS v4, Axios, @formkit/auto-animate

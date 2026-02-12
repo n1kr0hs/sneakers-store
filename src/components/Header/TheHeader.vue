@@ -1,15 +1,10 @@
 <script setup>
 import { computed } from "vue";
+import { useCartStore } from "@/stores/cart";
+import { formatPrice } from "@/utils/formatPrice";
 
-const props = defineProps({
-  cartTotal: { type: Number, default: 0 },
-});
-const emit = defineEmits(["open-cart"]);
-
-const formattedCartTotal = computed(() => {
-  if (!props.cartTotal) return "0";
-  return props.cartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u200A");
-});
+const cartStore = useCartStore();
+const formattedCartTotal = computed(() => formatPrice(cartStore.cartTotal));
 </script>
 
 <template>
@@ -25,7 +20,7 @@ const formattedCartTotal = computed(() => {
     <ul class="flex items-center gap-4 sm:gap-6 lg:gap-10 w-full sm:w-auto justify-end">
       <li
         class="flex items-center cursor-pointer gap-2 sm:gap-3 text-slate-500 hover:text-black transition-colors"
-        @click="emit('open-cart')"
+        @click="cartStore.openDrawer"
       >
         <img src="/cart.svg" alt="Корзина" class="w-5 h-5 sm:w-6 sm:h-6" />
         <p class="font-bold text-sm sm:text-base">{{ formattedCartTotal }} руб.</p>

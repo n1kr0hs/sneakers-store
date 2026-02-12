@@ -1,19 +1,17 @@
 <script setup>
-import { inject, onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import debounce from "lodash.debounce";
-import {
-  addFavorite,
-  getFavorites,
-  getItems,
-  removeFavorite,
-} from "@/api/client";
+import { getItems } from "@/api/client";
+import { useCartStore } from "@/stores/cart";
+import { useFavoritesStore } from "@/stores/favorites";
 import { CardList } from "@/components";
 
 const items = ref([]);
 const filters = reactive({ sortBy: "title", searchQuery: "" });
 const debouncedSearchQuery = ref("");
 
-const { cartItems, toggleCartItem } = inject("cartContext");
+const cartStore = useCartStore();
+const favoritesStore = useFavoritesStore();
 
 const updateItem = (id, payload) => {
   items.value = items.value.map((p) =>
@@ -31,9 +29,9 @@ const fetchItems = async () => {
     items.value = data.map((p) => ({
       ...p,
       imageUrl: p.imageUrl || "",
-      isFavorite: false,
-      favoriteId: null,
-      isAdded: cartItems.value.some((c) => c.id === p.id),
+      isFavorite: favoritesStore.isFavorite(p.id),
+      favoriteId: favoritesStore.getFavoriteId(p.id) || null,
+      isAdded: cartStore.items.some((c) => c.id === p.id),
     }));
   } catch (err) {
     console.error("Ошибка загрузки товаров:", err);
@@ -42,33 +40,31 @@ const fetchItems = async () => {
 
 const fetchFavorites = async () => {
   try {
-    const favorites = await getFavorites();
-    const favMap = new Map(favorites.map((f) => [f.productId, f]));
-    items.value = items.value.map((p) => {
-      const fav = favMap.get(p.id);
-      return fav
-        ? { ...p, isFavorite: true, favoriteId: fav.id }
-        : { ...p, isFavorite: false, favoriteId: null };
-    });
+    await favoritesStore.fetchFavorites();
+    items.value = items.value.map((p) => ({
+      ...p,
+      isFavorite: favoritesStore.isFavorite(p.id),
+      favoriteId: favoritesStore.getFavoriteId(p.id) || null,
+    }));
   } catch (err) {
     console.error("Ошибка загрузки избранного:", err);
   }
 };
 
 const addToCart = (item) => {
-  toggleCartItem(item);
+  cartStore.toggleCartItem(item);
   updateItem(item.id, {
-    isAdded: cartItems.value.some((c) => c.id === item.id),
+    isAdded: cartStore.items.some((c) => c.id === item.id),
   });
 };
 
 const addToFavorite = async (item) => {
   try {
     if (!item.isFavorite) {
-      const data = await addFavorite(item.id);
+      const data = await favoritesStore.addFavorite(item.id);
       updateItem(item.id, { isFavorite: true, favoriteId: data.id });
-    } else if (item.favoriteId) {
-      await removeFavorite(item.favoriteId);
+    } else {
+      await favoritesStore.removeFavorite(item.id);
       updateItem(item.id, { isFavorite: false, favoriteId: null });
     }
   } catch (err) {
@@ -101,11 +97,11 @@ watch(
 );
 
 watch(
-  cartItems,
-  (val) => {
+  () => cartStore.items,
+  () => {
     items.value = items.value.map((p) => ({
       ...p,
-      isAdded: val.some((c) => c.id === p.id),
+      isAdded: cartStore.items.some((c) => c.id === p.id),
     }));
   },
   { deep: true },
@@ -113,8 +109,8 @@ watch(
 
 onMounted(async () => {
   debouncedSearchQuery.value = filters.searchQuery;
+  await favoritesStore.fetchFavorites();
   await fetchItems();
-  await fetchFavorites();
 });
 </script>
 

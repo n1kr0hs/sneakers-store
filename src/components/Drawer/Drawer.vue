@@ -1,41 +1,27 @@
 <script setup>
 import { computed, ref } from "vue";
+import { useCartStore } from "@/stores/cart";
+import { formatPrice } from "@/utils/formatPrice";
 import CartList from "../Cart/CartList.vue";
 import DrawerHeader from "./DrawerHeader.vue";
 import InfoBlock from "../InfoBlock/InfoBlock.vue";
 
-const props = defineProps({
-  cartItems: { type: Array, default: () => [] },
-  onCreateOrder: { type: Function, default: null },
-  cartTotal: { type: Number, default: 0 },
-  tax: { type: Number, default: 0 },
-  orderId: { type: [Number, String], default: null },
-});
-
-const emit = defineEmits(["close", "removeFromCart"]);
-
+const cartStore = useCartStore();
 const isLoading = ref(false);
 
-const formatPrice = (price) => {
-  if (!price) return "0";
-  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u200A");
-};
-
-const formattedCartTotal = computed(() => formatPrice(props.cartTotal));
-const formattedTax = computed(() => formatPrice(props.tax));
+const formattedCartTotal = computed(() => formatPrice(cartStore.cartTotal));
+const formattedTax = computed(() => formatPrice(cartStore.tax));
 
 const handleClose = () => {
-  emit("close");
+  cartStore.closeDrawer();
 };
 
 const handleCreateOrder = async () => {
-  if (!props.cartItems.length || !props.onCreateOrder) {
-    return;
-  }
+  if (!cartStore.items.length) return;
 
   isLoading.value = true;
   try {
-    await props.onCreateOrder();
+    await cartStore.createOrder();
   } finally {
     isLoading.value = false;
   }
@@ -53,15 +39,15 @@ const handleCreateOrder = async () => {
   >
     <DrawerHeader @close="handleClose" />
 
-    <div v-if="orderId" class="flex h-full items-center">
+    <div v-if="cartStore.orderId" class="flex h-full items-center">
       <InfoBlock
         title="Заказ оформлен!"
-        :descr="`Ваш заказ #${orderId} скоро будет передан курьерской доставке`"
+        :descr="`Ваш заказ #${cartStore.orderId} скоро будет передан курьерской доставке`"
         image-url="order-success-icon.png"
       />
     </div>
 
-    <div v-else-if="!cartItems.length" class="flex h-full items-center">
+    <div v-else-if="!cartStore.items.length" class="flex h-full items-center">
       <InfoBlock
         title="Корзина пустая"
         descr="Добавьте хотя бы одну пару кроссовок, чтобы сделать заказ."
@@ -70,11 +56,7 @@ const handleCreateOrder = async () => {
     </div>
 
     <div v-else class="flex flex-col">
-      <CartList
-        :items="cartItems"
-        class="flex-1 pb-2 sm:pb-4"
-        @remove="emit('removeFromCart', $event)"
-      />
+      <CartList class="flex-1 pb-2 sm:pb-4" />
 
       <div class="flex flex-col gap-3 sm:gap-4 mt-4 sm:mt-6 pb-2">
         <div class="flex gap-2">
@@ -90,7 +72,7 @@ const handleCreateOrder = async () => {
         </div>
 
         <button
-          :disabled="!cartItems.length || isLoading"
+          :disabled="!cartStore.items.length || isLoading"
           class="mt-4 bg-lime-500 w-full rounded-xl py-3 text-white font-medium cursor-pointer hover:bg-lime-600 active:bg-lime-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
           @click="handleCreateOrder"
         >
