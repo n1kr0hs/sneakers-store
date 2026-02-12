@@ -1,6 +1,8 @@
 # Sneakers Store - Магазин кроссовок
 
-## Реализованный функционал
+## [Deploy](https://n1kr0hs.github.io/vue-project/)
+
+### Реализованный функционал
 
 - **Каталог кроссовок** с загрузкой данных из REST API
 - **Сортировка** по названию и цене (дешевые / дорогие)
@@ -26,6 +28,5 @@
 - **Переиспользуемые компоненты** (`Card`, `CartList`, `Drawer`, `InfoBlock`, `TheHeader`), разделенные по ответственности
 - **UI на utility‑классах** (Tailwind‑подобная верстка) с плавными hover‑эффектами на карточках и кнопках
 
-### [Deploy](https://n1kr0hs.github.io/vue-project/)
 
 #### Stack: Vue 3 Js, Vue Router, TailwindCSS v4, Axios, @formkit/auto-animate

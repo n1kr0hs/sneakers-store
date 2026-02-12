@@ -10,7 +10,7 @@ const emit = defineEmits(["open-cart"]);
     <router-link to="/" class="flex items-center gap-3 sm:gap-4 group">
       <img src="/logo.png" alt="Logo" class="w-9 sm:w-10 transition-transform group-hover:scale-105" />
       <div>
-        <h2 class="text-lg sm:text-xl font-bold uppercase">Vue Sneakers</h2>
+        <h2 class="text-lg sm:text-xl font-bold uppercase">Sneakers Store</h2>
         <p class="text-slate-400 text-sm hidden sm:block">Магазин лучших кроссовок</p>
       </div>
     </router-link>
