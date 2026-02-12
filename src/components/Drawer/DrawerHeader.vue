@@ -1,9 +1,9 @@
 <script setup>
 const emit = defineEmits(["close"]);
 
-function handleClose() {
+const handleClose = () => {
   emit("close");
-}
+};
 </script>
 
 <template>

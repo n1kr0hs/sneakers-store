@@ -1,8 +1,15 @@
 <script setup>
-defineProps({
+import { computed } from "vue";
+
+const props = defineProps({
   item: { type: Object, required: true },
 });
 const emit = defineEmits(["remove"]);
+
+const formattedPrice = computed(() => {
+  if (!props.item.price) return "0";
+  return props.item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u200A");
+});
 </script>
 
 <template>
@@ -19,7 +26,7 @@ const emit = defineEmits(["remove"]);
       <p class="font-medium truncate">{{ item.title }}</p>
 
       <div class="flex justify-between items-center mt-2">
-        <p class="font-bold">{{ item.price }} руб.</p>
+        <p class="font-bold">{{ formattedPrice }} руб.</p>
         <img
           class="opacity-40 hover:opacity-100 cursor-pointer transition w-5 h-5"
           src="/close.svg"

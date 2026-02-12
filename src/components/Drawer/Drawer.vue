@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import CartList from "../Cart/CartList.vue";
 import DrawerHeader from "./DrawerHeader.vue";
 import InfoBlock from "../InfoBlock/InfoBlock.vue";
@@ -15,6 +15,14 @@ const props = defineProps({
 const emit = defineEmits(["close", "removeFromCart"]);
 
 const isLoading = ref(false);
+
+const formatPrice = (price) => {
+  if (!price) return "0";
+  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u200A");
+};
+
+const formattedCartTotal = computed(() => formatPrice(props.cartTotal));
+const formattedTax = computed(() => formatPrice(props.tax));
 
 const handleClose = () => {
   emit("close");
@@ -72,13 +80,13 @@ const handleCreateOrder = async () => {
         <div class="flex gap-2">
           <span>Итого:</span>
           <div class="flex-1 border-b border-dashed"></div>
-          <p class="font-bold">{{ cartTotal }} руб.</p>
+          <p class="font-bold">{{ formattedCartTotal }} руб.</p>
         </div>
 
         <div class="flex gap-2">
           <span>Налог 5%:</span>
           <div class="flex-1 border-b border-dashed"></div>
-          <p class="font-bold">{{ tax }} руб.</p>
+          <p class="font-bold">{{ formattedTax }} руб.</p>
         </div>
 
         <button

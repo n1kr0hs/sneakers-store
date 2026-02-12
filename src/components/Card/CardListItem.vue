@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+import { computed } from "vue";
+
+const props = defineProps({
   id: Number,
   imageUrl: String,
   title: String,
@@ -8,6 +10,11 @@ defineProps({
   isAdded: Boolean,
   onClickFavorite: { type: Function, default: null },
   onClickAdd: { type: Function, default: null },
+});
+
+const formattedPrice = computed(() => {
+  if (!props.price) return "0";
+  return props.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u200A");
 });
 </script>
 
@@ -19,12 +26,12 @@ defineProps({
       :src="!isFavorite ? 'like-1.svg' : 'like-2.svg'"
       @click.stop="onClickFavorite?.()"
       alt="В избранное"
-      class="absolute top-4 left-4 sm:top-6 sm:left-6 w-8 h-8 opacity-80 hover:opacity-100 transition-opacity z-10"
+      class="absolute top-4 left-4 select-none sm:top-6 sm:left-6 w-8 h-8 opacity-80 hover:opacity-100 transition-opacity z-10"
     />
     <img
       :src="imageUrl"
       :alt="title"
-      class="relative z-0 w-full h-40 sm:h-48 object-contain transition-transform duration-300 group-hover:scale-105"
+      class="relative z-0 w-full h-40 select-none sm:h-48 object-contain transition-transform duration-300 group-hover:scale-105"
     />
     <p class="mt-3 text-sm sm:text-base flex-1">
       {{ title }}
@@ -33,14 +40,14 @@ defineProps({
     <div class="flex justify-between items-end mt-4 sm:mt-5">
       <div class="flex flex-col">
         <span class="text-slate-400 text-xs sm:text-sm">Цена:</span>
-        <span class="font-bold text-sm sm:text-base">{{ price }} руб.</span>
+        <span class="font-bold text-sm sm:text-base">{{ formattedPrice }} руб.</span>
       </div>
 
       <img
         :src="!isAdded ? 'plus.svg' : 'checked.svg'"
         @click.stop="onClickAdd?.()"
         alt="Добавить в корзину"
-        class="w-8 h-8 opacity-70 hover:opacity-100 transition-opacity"
+        class="w-8 h-8 opacity-70 select-none hover:opacity-100 transition-opacity"
       />
     </div>
   </div>

@@ -1,8 +1,15 @@
 <script setup>
-defineProps({
+import { computed } from "vue";
+
+const props = defineProps({
   cartTotal: { type: Number, default: 0 },
 });
 const emit = defineEmits(["open-cart"]);
+
+const formattedCartTotal = computed(() => {
+  if (!props.cartTotal) return "0";
+  return props.cartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u200A");
+});
 </script>
 
 <template>
@@ -21,7 +28,7 @@ const emit = defineEmits(["open-cart"]);
         @click="emit('open-cart')"
       >
         <img src="/cart.svg" alt="Корзина" class="w-5 h-5 sm:w-6 sm:h-6" />
-        <p class="font-bold text-sm sm:text-base">{{ cartTotal }} руб.</p>
+        <p class="font-bold text-sm sm:text-base">{{ formattedCartTotal }} руб.</p>
       </li>
 
       <li>

@@ -4,11 +4,13 @@ import { getFavorites, getItems, removeFavorite } from "@/api/client";
 import { CardList, InfoBlock } from "@/components";
 
 const favoriteItems = ref([]);
+const isLoading = ref(true);
 const cartContext = inject("cartContext");
 const { cartItems, toggleCartItem } = cartContext ?? {};
 
 const fetchFavorites = async () => {
   try {
+    isLoading.value = true;
     const [favorites, allItems] = await Promise.all([
       getFavorites(),
       getItems(),
@@ -29,6 +31,8 @@ const fetchFavorites = async () => {
       .filter(Boolean);
   } catch (err) {
     console.error("Ошибка загрузки избранного:", err);
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -60,7 +64,7 @@ onMounted(fetchFavorites);
   <div class="space-y-6">
     <h2 class="text-2xl sm:text-3xl font-bold animate-fade-in">Мои закладки</h2>
     <div
-      v-if="!favoriteItems.length"
+      v-if="!isLoading && !favoriteItems.length"
       class="flex flex-col items-center justify-center py-16 sm:py-24"
     >
       <InfoBlock
@@ -70,7 +74,7 @@ onMounted(fetchFavorites);
       />
     </div>
     <CardList
-      v-else
+      v-else-if="!isLoading"
       :items="favoriteItems"
       @add-to-favorite="addToFavorite"
       @add-to-cart="addToCart"
