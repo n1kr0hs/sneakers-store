@@ -6,6 +6,11 @@ const routes = [
     name: "home",
     component: () => import("@/pages/Home.vue"),
   },
+  {
+    path: "/favorites",
+    name: "favorites",
+    component: () => import("@/pages/Favorites.vue"),
+  },
 ];
 
 const router = createRouter({
