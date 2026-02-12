@@ -9,6 +9,7 @@ const props = defineProps({
   onCreateOrder: { type: Function, default: null },
   cartTotal: { type: Number, default: 0 },
   tax: { type: Number, default: 0 },
+  orderId: { type: [Number, String], default: null },
 });
 
 const emit = defineEmits(["close", "removeFromCart"]);
@@ -44,7 +45,17 @@ const handleCreateOrder = async () => {
   >
     <DrawerHeader @close="handleClose" />
 
-    <div v-if="!cartItems.length" class="flex h-full items-center">
+    <!-- Сообщение об успешном заказе -->
+    <div v-if="orderId" class="flex h-full items-center">
+      <InfoBlock
+        title="Заказ оформлен!"
+        :descr="`Ваш заказ #${orderId} скоро будет передан курьерской доставке`"
+        image-url="/order-success-icon.png"
+      />
+    </div>
+
+    <!-- Пустая корзина -->
+    <div v-else-if="!cartItems.length" class="flex h-full items-center">
       <InfoBlock
         title="Корзина пустая"
         descr="Добавьте хотя бы одну пару кроссовок, чтобы сделать заказ."
@@ -52,6 +63,7 @@ const handleCreateOrder = async () => {
       />
     </div>
 
+    <!-- Список товаров и кнопка оформления -->
     <div v-else class="flex flex-col">
       <CartList
         :items="cartItems"

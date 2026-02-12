@@ -6,6 +6,7 @@ import { Drawer, TheHeader } from "@/components";
 
 const cartItems = ref([]);
 const isDrawerOpen = ref(false);
+const orderId = ref(null);
 
 const cartTotal = computed(() =>
   cartItems.value.reduce((sum, item) => sum + (item.price || 0), 0),
@@ -18,6 +19,7 @@ const openDrawer = () => {
 
 const closeDrawer = () => {
   isDrawerOpen.value = false;
+  orderId.value = null;
 };
 
 const toggleCartItem = (item) => {
@@ -34,9 +36,9 @@ const toggleCartItem = (item) => {
 const createOrder = async () => {
   if (!cartItems.value.length) return;
   try {
-    await apiCreateOrder(cartItems.value);
+    const order = await apiCreateOrder(cartItems.value);
+    orderId.value = order?.id ?? null;
     cartItems.value = [];
-    closeDrawer();
   } catch (err) {
     console.error("Ошибка оформления заказа:", err);
   }
@@ -73,6 +75,7 @@ onMounted(() => {
     :cart-items="cartItems"
     :cart-total="cartTotal"
     :tax="tax"
+    :order-id="orderId"
     :on-create-order="createOrder"
     @close="closeDrawer"
     @remove-from-cart="toggleCartItem"

@@ -9,4 +9,4 @@ export const getFavorites = () => api.get("/favorites").then((r) => r.data);
 export const addFavorite = (productId) =>
   api.post("/favorites", { productId }).then((r) => r.data);
 export const removeFavorite = (id) => api.delete(`/favorites/${id}`);
-export const createOrder = (items) => api.post("/orders", { items });
+export const createOrder = (items) => api.post("/orders", { items }).then((r) => r.data);
