@@ -1,6 +1,6 @@
 # Sneakers Store - Магазин кроссовок
 
-## [Deploy](https://n1kr0hs.github.io/sneakers-store-vue/)
+## [Deploy](https://n1kr0hs.github.io/sneakers-store/)
 
 ### Реализованный функционал
 

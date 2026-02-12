@@ -24,7 +24,7 @@ const fetchFavorites = async () => {
         if (!item) return null;
         return {
           ...item,
-          imageUrl: item.imageUrl?.startsWith("/") ? item.imageUrl : `/${item.imageUrl}`,
+          imageUrl: item.imageUrl || "",
           isFavorite: true,
           favoriteId: fav.id,
           isAdded: cartItems?.value?.some((c) => c.id === item.id) ?? false,

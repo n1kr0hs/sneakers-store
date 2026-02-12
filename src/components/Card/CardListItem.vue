@@ -16,7 +16,7 @@ defineProps({
     class="group relative flex flex-col h-full bg-white border border-slate-100 rounded-2xl sm:rounded-3xl p-5 sm:p-8 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:border-lime-200"
   >
     <img
-      :src="!isFavorite ? '/like-1.svg' : '/like-2.svg'"
+      :src="!isFavorite ? 'like-1.svg' : 'like-2.svg'"
       @click.stop="onClickFavorite?.()"
       alt="В избранное"
       class="absolute top-4 left-4 sm:top-6 sm:left-6 w-8 h-8 opacity-80 hover:opacity-100 transition-opacity z-10"
@@ -37,7 +37,7 @@ defineProps({
       </div>
 
       <img
-        :src="!isAdded ? '/plus.svg' : '/checked.svg'"
+        :src="!isAdded ? 'plus.svg' : 'checked.svg'"
         @click.stop="onClickAdd?.()"
         alt="Добавить в корзину"
         class="w-8 h-8 opacity-70 hover:opacity-100 transition-opacity"

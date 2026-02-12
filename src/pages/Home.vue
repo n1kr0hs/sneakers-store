@@ -1,5 +1,6 @@
 <script setup>
 import { inject, onMounted, reactive, ref, watch } from "vue";
+import debounce from "lodash.debounce";
 import {
   addFavorite,
   getFavorites,
@@ -10,23 +11,26 @@ import { CardList } from "@/components";
 
 const items = ref([]);
 const filters = reactive({ sortBy: "title", searchQuery: "" });
+const debouncedSearchQuery = ref("");
 
 const { cartItems, toggleCartItem } = inject("cartContext");
 
 const updateItem = (id, payload) => {
   items.value = items.value.map((p) =>
-    p.id === id ? { ...p, ...payload } : p
+    p.id === id ? { ...p, ...payload } : p,
   );
 };
 
 const fetchItems = async () => {
   try {
     const params = { sortBy: filters.sortBy };
-    if (filters.searchQuery) params.title = `*${filters.searchQuery}*`;
+    if (debouncedSearchQuery.value) {
+      params.title = `*${debouncedSearchQuery.value}*`;
+    }
     const data = await getItems(params);
     items.value = data.map((p) => ({
       ...p,
-      imageUrl: p.imageUrl?.startsWith("/") ? p.imageUrl : `/${p.imageUrl}`,
+      imageUrl: p.imageUrl || "",
       isFavorite: false,
       favoriteId: null,
       isAdded: cartItems.value.some((c) => c.id === p.id),
@@ -72,13 +76,28 @@ const addToFavorite = async (item) => {
   }
 };
 
+const updateDebouncedSearch = debounce((value) => {
+  debouncedSearchQuery.value = value;
+}, 300);
+
 watch(
-  filters,
+  () => filters.searchQuery,
+  (newValue) => {
+    updateDebouncedSearch(newValue);
+  },
+);
+
+watch(debouncedSearchQuery, async () => {
+  await fetchItems();
+  await fetchFavorites();
+});
+
+watch(
+  () => filters.sortBy,
   async () => {
     await fetchItems();
     await fetchFavorites();
   },
-  { deep: true }
 );
 
 watch(
@@ -89,10 +108,11 @@ watch(
       isAdded: val.some((c) => c.id === p.id),
     }));
   },
-  { deep: true }
+  { deep: true },
 );
 
 onMounted(async () => {
+  debouncedSearchQuery.value = filters.searchQuery;
   await fetchItems();
   await fetchFavorites();
 });
@@ -103,9 +123,7 @@ onMounted(async () => {
     <div
       class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4"
     >
-      <h2
-        class="text-2xl sm:text-3xl font-bold animate-fade-in"
-      >
+      <h2 class="text-2xl sm:text-3xl font-bold animate-fade-in">
         Все кроссовки
       </h2>
       <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
