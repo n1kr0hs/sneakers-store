@@ -1,10 +1,6 @@
 <script setup>
 import { inject, onMounted, ref, watch } from "vue";
-import {
-  getFavorites,
-  getItems,
-  removeFavorite,
-} from "@/api/client";
+import { getFavorites, getItems, removeFavorite } from "@/api/client";
 import { CardList, InfoBlock } from "@/components";
 
 const favoriteItems = ref([]);
@@ -54,7 +50,7 @@ watch(
       isAdded: val.some((c) => c.id === i.id),
     }));
   },
-  { deep: true }
+  { deep: true },
 );
 
 onMounted(fetchFavorites);
@@ -62,9 +58,7 @@ onMounted(fetchFavorites);
 
 <template>
   <div class="space-y-6">
-    <h2 class="text-2xl sm:text-3xl font-bold animate-fade-in">
-      Мои закладки
-    </h2>
+    <h2 class="text-2xl sm:text-3xl font-bold animate-fade-in">Мои закладки</h2>
     <div
       v-if="!favoriteItems.length"
       class="flex flex-col items-center justify-center py-16 sm:py-24"
@@ -72,7 +66,7 @@ onMounted(fetchFavorites);
       <InfoBlock
         title="Закладок пока нет"
         descr="Добавляйте товары в избранное — они появятся здесь"
-        image-url="/heart.svg"
+        image-url="heart.svg"
       />
     </div>
     <CardList

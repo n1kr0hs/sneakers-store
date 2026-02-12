@@ -7,7 +7,7 @@ import vueDevTools from "vite-plugin-vue-devtools";
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  const base = mode === "production" ? "/sneakers-store" : "/";
+  const base = "/sneakers-store";
 
   return {
     plugins: [vue(), vueDevTools(), tailwindcss()],

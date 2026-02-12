@@ -45,25 +45,22 @@ const handleCreateOrder = async () => {
   >
     <DrawerHeader @close="handleClose" />
 
-    <!-- Сообщение об успешном заказе -->
     <div v-if="orderId" class="flex h-full items-center">
       <InfoBlock
         title="Заказ оформлен!"
         :descr="`Ваш заказ #${orderId} скоро будет передан курьерской доставке`"
-        image-url="/order-success-icon.png"
+        image-url="order-success-icon.png"
       />
     </div>
 
-    <!-- Пустая корзина -->
     <div v-else-if="!cartItems.length" class="flex h-full items-center">
       <InfoBlock
         title="Корзина пустая"
         descr="Добавьте хотя бы одну пару кроссовок, чтобы сделать заказ."
-        image-url="/package-icon.png"
+        image-url="package-icon.png"
       />
     </div>
 
-    <!-- Список товаров и кнопка оформления -->
     <div v-else class="flex flex-col">
       <CartList
         :items="cartItems"
